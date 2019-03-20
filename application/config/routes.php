@@ -52,6 +52,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['register'] = 'user/register';
 $route['login'] = 'user/login';
 $route['logout'] = 'user/logout';
+$route['users'] = 'user/user_list';
+$route['trading_accounts'] = 'dashboard/trading_accounts';
+$route['trading_account/edit/(:num)'] = 'dashboard/account_edit/$1';
+$route['trading_account/update'] = 'dashboard/update';
+$route['trading_account/add'] = 'dashboard/add';
+$route['status'] = 'check_trading_account';
 
 $route['default_controller'] = 'user/login';
 $route['404_override'] = '';

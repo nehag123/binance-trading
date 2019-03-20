@@ -226,9 +226,20 @@ function getTradingAccount($trading_account)
 {
 	$CI  =& get_instance();
 	$account=$CI->db->get_where('user_temp', array('id' => $trading_account))->row();
+	if($account){
 	return $account->account_name;
-	}
+   }else{
+	   return false;
+	   }
+}
 
+function getTradingAccounts()
+{
+	$CI  =& get_instance();
+	$CI->db->select('*');
+	$CI->db->from('user_temp');
+	return $CI->db->get()->result_array();
+}
 	
 
 
@@ -2037,7 +2048,25 @@ function initializeJsonFiles($accountsArray,$sellCoinSymbol,$btcBalanceThreshold
 			}
 		}
 	}	
-}		
+}	
+
+// To check trading account exists or not
+
+function existTradingAccount($tradeID){
+	
+	$CI  = & get_instance();
+	$CI->db->select('trash'); 
+    $CI->db->from('user_temp');   
+    $CI->db->where('id',$tradeID);
+    $trading=$CI->db->get()->row();
+  
+	if($trading){
+		return $trading->trash;
+   }else{
+	   return false;
+	   }
+	
+}	
 
 
 ?>

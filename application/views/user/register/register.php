@@ -19,7 +19,9 @@
 			<div class="page-header">
 				<h1>Register</h1>
 			</div>
-			<?= form_open() ?>
+			<?php $attributes = array('id' => 'reg-form');
+           echo form_open('user/register', $attributes);?>
+			
 				<div class="form-group">
 					<label for="username">Username</label>
 					<input type="text" class="form-control" id="username" name="username" placeholder="Enter a username">
@@ -52,12 +54,13 @@
 				</div>
 				<div class="form-group" id="binance-section" style="display:none">
 					<label for="email">Binance Trading Account Name</label>
-					<select class="form-control" name="trading_account">
+					<select class="form-control" name="trading_account" id="trading_account" >
 						<option value="">Select Binance Trading Account</option>
 						<?php foreach($accounts as $account){?>
 						<option value="<?= $account['id'];?>"><?= $account['account_name'];?></option>
 					    <?php } ?>
 					</select>
+					<span class='trading-error' style="display:none;color:red">Please select one trading account</span>
 					<p class="help-block">Select One of Trading Account</p>
 				</div>
 				<div class="form-group">
@@ -65,7 +68,7 @@
                 <?php echo $script;?>
                 </div>
 				<div class="form-group">
-					<input type="submit" class="btn btn-default" value="Register">
+					<input onclick="return checkTradingAccount();" type="submit" class="btn btn-default" value="Register">
 				</div>
 			</form>
 		</div>
@@ -73,13 +76,39 @@
 </div><!-- .container -->
 <script>
 function changeRoles(){
-	var selectedCountry = $('#roles').children("option:selected"). val();
-	if(selectedCountry == 2)
-	{  console.log('y');
+	var selectedRole = $('#roles').children("option:selected"). val();
+	if(selectedRole == 2)
+	{  
 		 $('#binance-section').show();
 		}else{
-		     console.log('n');	
+		     
 			$('#binance-section').hide();
 			}
 	}
+	
+function checkTradingAccount(){
+	
+	
+	if(jQuery('#trading_account:visible').length == 0 ){
+       
+                 return true;
+          }else{
+			 
+			    var selectedTradingAccount = $('#trading_account').children("option:selected"). val();	
+					   if(selectedTradingAccount)
+					    {  
+						   $('.trading-error').hide();
+			                return true;
+					    }else{
+					
+					           $('.trading-error').show();
+					           return false;
+					        }
+	           }	
+	
+	
+	}	
+	
+
+	
 	</script>
