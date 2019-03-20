@@ -14,6 +14,7 @@
 	<link href="/assets/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/assets/css/style.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
 
 	<!--[if lt IE 9]>
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -37,7 +38,8 @@
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav navbar-right">
 					<?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true && $_SESSION['is_admin'] == 1) : ?>
-						<li><a href="<?= base_url('register') ?>">Add Users</a></li>
+						<li><a href="<?= base_url('users') ?>">Users</a></li>
+						<li><a href="<?= base_url('trading_accounts') ?>">Trading Accounts</a></li>
 					<?php endif; ?>
 
 					<?php if (isset($_SESSION['username']) && $_SESSION['logged_in'] === true) : ?>
@@ -51,7 +53,7 @@
 		</div><!-- .container-fluid -->
 	</nav><!-- .navbar -->
 </header>
-
-<main id="site-content" role="main">
+<body onload="checkUserAccount()" >
+<main id="site-content" role="main" >
 		
 		

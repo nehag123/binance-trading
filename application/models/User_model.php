@@ -46,6 +46,31 @@ class User_model extends CI_Model {
 	}
 	
 	/**
+	 * 
+	 * Update user
+	 * 
+	 **/
+	 
+	 public function update_user($id,$data)
+	 {
+		 $this->db->where('id', $id);
+         return $this->db->update('users', $data);
+		 
+		}
+		
+	/*
+	 * delete user
+	 * 
+	 */
+	 
+	 	public function delete_user($id,$data)
+	   {
+		 $this->db->where('id', $id);
+         return $this->db->update('users', $data);
+		 
+		}
+	
+	/**
 	 * resolve_user_login function.
 	 * 
 	 * @access public
@@ -57,10 +82,10 @@ class User_model extends CI_Model {
 		
 		$this->db->select('password');
 		$this->db->from('users');
-		$this->db->where('username', $username);
+		$where=array('username'=>$username,'trash !='=>1);
+		$this->db->where($where);
 		$hash = $this->db->get()->row('password');
-		
-		return $this->verify_password_hash($password, $hash);
+	   return $this->verify_password_hash($password, $hash);
 		
 	}
 	
@@ -80,6 +105,20 @@ class User_model extends CI_Model {
 		return $this->db->get()->row('id');
 		
 	}
+	
+	/**
+	 * Get all users
+	 **/
+	
+	public function get_user_list() {
+		
+		$this->db->select('*');
+		$this->db->from('users');
+		$this->db->where('trash', 0);
+       return $this->db->get()->result_array();
+		
+	}
+	
 	
 	/**
 	 * get_user function.

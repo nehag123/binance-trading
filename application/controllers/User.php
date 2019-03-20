@@ -64,7 +64,6 @@ class User extends CI_Controller {
 		$this->form_validation->set_rules('user_role', 'User Role', 'trim|required');
 		$this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[6]');
 		$this->form_validation->set_rules('password_confirm', 'Confirm Password', 'trim|required|min_length[6]|matches[password]');
-		$this->form_validation->set_rules('trading_account', 'Binance Trading Account', 'trim|required');
 		$this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required');
 		
 		if ($this->form_validation->run() === false) {
@@ -169,12 +168,25 @@ class User extends CI_Controller {
 				$_SESSION['is_confirmed'] = (bool)$user->is_confirmed;
 				$_SESSION['is_admin']     = (bool)$user->is_admin;
 				$_SESSION['trading_account']= (int)$user->trading_account;
-				// user login ok
-				$this->load->view('header');
-				$this->load->view('user/login/login_success', $data);
-				$this->load->view('footer');
-
-				redirect('dashboard');
+				
+				
+				// Check user trading account is available or not
+				
+			    $notExistTrading=existTradingAccount($_SESSION['trading_account']);
+                 if($notExistTrading == true)
+                 {  
+					 redirect('status');
+					
+					 }else{
+						 
+						 // user login ok
+								$this->load->view('header');
+								$this->load->view('user/login/login_success', $data);
+								$this->load->view('footer');
+                                redirect('dashboard');						 
+						 
+						 }
+				
 				//redirect("auth");
 				
 			} else {
@@ -192,6 +204,104 @@ class User extends CI_Controller {
 		}
 		
 	}
+	
+  /** 
+   * 
+   * User List
+   * 
+   **/
+   
+   public function user_list()
+   {
+	   if((!$this->session->userdata('username') && !$this->session->userdata('logged_in'))) {
+			redirect('/');
+		}
+
+		if(($this->session->userdata('is_admin') != 1)) {
+			redirect('/dashboard');
+		}
+		$data['users']= $this->user_model->get_user_list();
+		$this->load->view('header');
+		$this->load->view('user/list/users', $data);
+		$this->load->view('footer');
+
+
+	  }	
+	  
+	  // check user exists or not
+	  
+	  public function checkUserExists(){
+		   
+		  $username=$this->input->post('username');
+		  $user=$this->user_model->get_user_id_from_username($username);
+		  if($user)
+		  {
+			  $error=true;
+			   echo $error;
+			  }else{
+				  
+				   $error=false;
+				   echo $error;
+				  }
+		  
+		  }
+	
+	/*
+	 * Edit User Information
+	 *  
+	 */
+	
+	public function edit($id){
+		
+		if((!$this->session->userdata('username') && !$this->session->userdata('logged_in'))) {
+			redirect('/');
+		}
+
+		if(($this->session->userdata('is_admin') != 1)) {
+			redirect('/dashboard');
+		}
+		$data['accounts']= $this->user_model->getAllTradingAccounts();
+		$data['user']= $this->user_model->get_user($id);
+		$this->load->view('header');
+		$this->load->view('user/list/edit', $data);
+		$this->load->view('footer');
+		
+		}
+		
+	public function update(){
+		 $user_id=$this->input->post('userid');
+		 $username=$this->input->post('username');
+		 $email= $this->input->post('email');
+		 $role= $this->input->post('user_role');
+		 $trading_account= $this->input->post('trading_account');
+		 $date=date('Y-m-j H:i:s');
+		 if($role==2)
+		 {
+			 $assigned_account=$trading_account;
+			 }else{
+				 $assigned_account=0;
+				 }
+		 $user=$this->user_model->get_user_id_from_username($username);
+		 
+	     $data=array('username'=>$username,'email'=>$email,'user_role'=>$role,'trading_account'=>$assigned_account,'updated_at'=>$date);
+		
+		 $this->user_model->update_user($user_id,$data);
+			
+		}	
+		
+	/**
+	 * 
+	 * Delete a user
+	 * 
+	 **/	
+	 
+	 public function delete(){
+		
+		$id=$this->input->post('id');
+		$data=array('trash'=>1);
+		$this->user_model->delete_user($id,$data);
+		
+	 }
 	
 	/**
 	 * logout function.

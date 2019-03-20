@@ -66,7 +66,7 @@
 		</div>
 
 
-		<div class="rounded_frame_full" style="display: flex; position:relative;">
+		<div class="rounded_frame_full" style="position:relative;">
 			<!-- <h3>Account: <?php echo $account; ?></h3> -->
 			<p>Account: <?php echo $account; ?> | Balance: <strong><?php echo $balanceTotal; ?></strong> BTC | Bitcoin: <strong><?php echo $balanceBitcoinTotal; ?></strong> BTC | Altcoin: <strong><?php echo $balanceAltcoinTotal; ?></strong> BTC | Cash:    <strong><?php echo $balanceCashTotal; ?></strong> BTC<?php if (($_SESSION['logged_in'] === true && $_SESSION['trading_account'] == 0)||($_SESSION['is_admin'] == 1) ) :?>| Switch Account:  <div class="form-box" style="position:absolute; left:139px; top:25px;"><?php $accountsArray = getApiKeyAccounts();  foreach ($accountsArray as $chooseAccount) { ?> <form  style="float: left; margin: 0; padding: 0; display:inline!important;" method="POST" action="">
 						<input type="hidden" name="user" value="admin">
@@ -80,72 +80,70 @@
 	
 	
 <?php 
-		$selectedCoinTradeStatusResult = getCoinOwnedTradedStatus($account,$trade_coin_symbol);
-		$stablecoinPricesFullArray = aggregateStablecoinData($account);
-		$coinTraded = $selectedCoinTradeStatusResult['isTraded'];
-		$isOwned = $selectedCoinTradeStatusResult['isOwned'];
-		$tradeStatus = $selectedCoinTradeStatusResult['tradeStatus'];
+		//~ $selectedCoinTradeStatusResult = getCoinOwnedTradedStatus($account,$trade_coin_symbol);
+		//~ $stablecoinPricesFullArray = aggregateStablecoinData($account);
+		//~ $coinTraded = $selectedCoinTradeStatusResult['isTraded'];
+		//~ $isOwned = $selectedCoinTradeStatusResult['isOwned'];
+		//~ $tradeStatus = $selectedCoinTradeStatusResult['tradeStatus'];
 		
 //		print_r($selectedCoinTradeStatusResult['test']);
 ?>
+<!--
 	</div>
 		<div class="rounded_frame_full">
 		<h3>Stablecoins</h3>
+-->
 <?php 
-	foreach ($stablecoinPricesFullArray as $stablecoinRec) {
+	//~ foreach ($stablecoinPricesFullArray as $stablecoinRec) {
 
-// 			echo '<hr />';
-// 	print_r($stablecoinRec);
-// 		echo '<br />';
-// 
-		$stablecoinSymbol = $stablecoinRec['symbol'];
-		$stablecoinName = $stablecoinRec['name'];
-		$stablecoinBalance = $stablecoinRec['balance'];
-		$stablecoinPriceArray = $stablecoinRec['price_list'];
-		$stablecoinLogoArray = $stablecoinRec['icon_list'];
-		$stablecoinBalanceFormat = number_format(round($stablecoinBalance,2),2);		
-		$stablecoinHeld = $stablecoinBalance > 10;
+		//~ $stablecoinSymbol = $stablecoinRec['symbol'];
+		//~ $stablecoinName = $stablecoinRec['name'];
+		//~ $stablecoinBalance = $stablecoinRec['balance'];
+		//~ $stablecoinPriceArray = $stablecoinRec['price_list'];
+		//~ $stablecoinLogoArray = $stablecoinRec['icon_list'];
+		//~ $stablecoinBalanceFormat = number_format(round($stablecoinBalance,2),2);		
+		//~ $stablecoinHeld = $stablecoinBalance > 10;
 
 ?>
+<!--
 	<div style="width:195px; float:left; clear:none;" class="rounded_frame_col2">
 	<table width="100%">
 
 	<tr><td width="50%"><strong><?php echo $stablecoinSymbol; ?></strong></td><td align="right" width="50%"><?php echo $stablecoinBalanceFormat; ?></td>
 	</tr>
-<!--
-	<tr><td width="50%"><strong><?php echo $stablecoinSymbol; ?></strong></td><td align="right" width="50%"><?php echo $stablecoinName; ?></td>
-	</tr><tr>
-	<td width="50%">Balance:</td><td align="right" width="50%"><?php echo $stablecoinBalanceFormat; ?></td>
--->
+
 	</tr></table>
+-->
 <?php 
 	
 	
-		foreach ($stablecoinPriceArray as $stablecoinPriceRec) {
-			$stablecoinPair = $stablecoinPriceRec['pair'];
-			$stablecoinPrice = $stablecoinPriceRec['price'];
-			$stablecoinSignal = $stablecoinPriceRec['signal'];
-			$stablecoinPriceFormat = number_format(round($stablecoinPrice,4),4);		
-						if ($stablecoinSignal == -1){
-							$bgndcolor = 'red';
-						}elseif ($stablecoinSignal == 1){
-							$bgndcolor = 'green';
-						}else{
-							$bgndcolor = '#444444';
-						}					
+		//~ foreach ($stablecoinPriceArray as $stablecoinPriceRec) {
+			//~ $stablecoinPair = $stablecoinPriceRec['pair'];
+			//~ $stablecoinPrice = $stablecoinPriceRec['price'];
+			//~ $stablecoinSignal = $stablecoinPriceRec['signal'];
+			//~ $stablecoinPriceFormat = number_format(round($stablecoinPrice,4),4);		
+						//~ if ($stablecoinSignal == -1){
+							//~ $bgndcolor = 'red';
+						//~ }elseif ($stablecoinSignal == 1){
+							//~ $bgndcolor = 'green';
+						//~ }else{
+							//~ $bgndcolor = '#444444';
+						//~ }					
 			?>
+<!--
 				<table width="100%"><tr>
 				<td width="10px" style="background-color: <?php echo $bgndcolor; ?>;">&nbsp;</td>
 				<td width="50%">
 				<strong><a href="http://tradingview.com/chart?symbol=BINANCE:<?php echo $stablecoinPair ?>" target="_blank"><?php echo $stablecoinPair; ?></a></strong></td><td align="right"><?php echo $stablecoinPriceFormat; ?></td></tr></table>
 				</td></tr></table></p>
+-->
 			<?php 
 
 
-		}
-	echo '</div>';
+		//~ }
+	//~ echo '</div>';
 
-	}
+	//~ }
 ?>
 </div>
 <!--

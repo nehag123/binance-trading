@@ -24,8 +24,9 @@ class Dashboard extends CI_Controller {
 		//session_destroy();
         if((!$this->session->userdata('username') && !$this->session->userdata('logged_in'))) {
 			redirect('/');
-		}
-		  
+		} 
+        $trade_account=$this->session->userdata('trading_account');
+        
      
 		require_once APPPATH . "third_party/php-binance-api.php";
 		//$this->binApi = new Twilio\Rest\Client($sid, $token);
@@ -43,7 +44,8 @@ class Dashboard extends CI_Controller {
 		
 		//echo '<h1>##'.$switchToAccount.'##</h1>';
         $switch_account = $this->input->post('switch_account_code');
-        $trade_account=$this->session->userdata('trading_account');
+       
+		 
         if($trade_account == 0)
         {
 			$this->account= 'ubc';
@@ -802,5 +804,126 @@ class Dashboard extends CI_Controller {
 		$this->load->view('dashboard/binance_execute_trade' ,$data);		
 		$this->load->view('footer');
  }
+ 
+ 
+ /**
+  * 
+  * Trading Accounts
+  * 
+  * 
+  **/ 
+  
+ public function trading_accounts(){
+	 
+	 if((!$this->session->userdata('username') && !$this->session->userdata('logged_in'))) {
+			redirect('/');
+		}
+
+		if(($this->session->userdata('is_admin') != 1)) {
+			redirect('/dashboard');
+		}
+	    $this->load->model('trading_model');
+	    $data['accounts']= $this->trading_model->getTradingAccounts();
+		$this->load->view('header');
+		$this->load->view('dashboard/trading_accounts', $data);
+		$this->load->view('footer');
+ 
+	}
+	
+/**
+ * 
+ * Edit Trading Account
+ * 
+ **/ 	
+    
+  public function account_edit($id){
+	  
+	  $this->load->model('trading_model');
+	  $this->load->library('encrypt');
+	  
+	 $account= $this->trading_model->getTradingAccount($id); 
+	 $key=$this->encrypt->decode($account->api_key);
+	 $secret_key=$this->encrypt->decode($account->api_secret);
+	 $data['account']=$account->account_name;
+	 $data['key']=$key;
+	 $data['secret_key']=$secret_key;
+	 $data['active']=$account->active;
+	 $this->load->view('header');
+	 $this->load->view('dashboard/edit_trading_account', $data);
+	 $this->load->view('footer');
+  }
+  
+  // Update Trading Account
+  
+   public function update(){
+	    
+	    $this->load->model('trading_model');
+	     $this->load->library('encrypt');
+	    $id=$this->input->post('id');
+		$account_name=$this->input->post('aname');
+		$key= $this->encrypt->encode($this->input->post('akey'));
+		$secret_key= $this->encrypt->encode($this->input->post('skey'));
+		$status=$this->input->post('account-status');
+		$updated_date=date('Y-m-j H:i:s');
+		$data=array('account_name'=>$account_name,'api_key'=>$key,'api_secret'=>$secret_key,'active'=>isset($status)?1:0,'updated_at'=>$updated_date);
+	   
+	    $user=$this->trading_model->update_tradingAccount($id,$data);
+		 
+	}
+	
+ // Delete	a Trading Account
+ 
+  public function delete(){
+		$this->load->model('trading_model');
+		$id=$this->input->post('id');
+		$data=array('trash'=>1);
+		$this->trading_model->delete_tradingAccount($id,$data);
+		
+	 }
+	 
+ // Adding a New Trading Account
+ 
+  public function add(){
+	 
+	    if((!$this->session->userdata('username') && !$this->session->userdata('logged_in'))) {
+			redirect('/');
+		}
+
+		if(($this->session->userdata('is_admin') != 1)) {
+			redirect('/dashboard');
+		}
+		$this->load->model('trading_model');
+	    $this->load->library('encrypt');
+		
+		$data = new stdClass();
+		
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		
+		$this->form_validation->set_rules('account-name', 'Account Name', 'trim|required');
+		$this->form_validation->set_rules('account-key', 'API Key', 'trim|required');
+		$this->form_validation->set_rules('secret-key', 'Secret Key', 'trim|required');
+		
+		if ($this->form_validation->run() === false) {
+			
+			$this->load->view('header');
+			$this->load->view('dashboard/add_trading_account', $data);
+			$this->load->view('footer');
+			
+		} else {
+		 
+		 $account_name=$this->input->post('account-name');
+		 $api_key=$this->encrypt->encode($this->input->post('account-key'));
+		 $secret_key=$this->encrypt->encode($this->input->post('secret-key'));
+		 $status=$this->input->post('account-status');
+		 $data=array('user_id'=>1,'account_name'=>$account_name,'api_key'=>$api_key,'api_secret'=>$secret_key,'active'=>isset($status)?1:0,'trash'=>0);
+		 $this->trading_model->addNewTradingAccount($data);
+		  redirect('/trading_accounts');
+		}
+		
+	 
+	 
+	 }	 
+    
  
 }
